@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Flipper-@bhishek</title>
+    <style>
+        :root {
+            --primary: #25d366; 
+            --primary-dark: #128c7e;
+            --bg: #f0f2f5;
+            --border: #ced4da;
+            --text: #333;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .editor-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header-bar {
+            padding: 15px 20px;
+            background: var(--primary-dark);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: #fff;
+            color: var(--primary-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:active { transform: scale(0.95); }
+
+        .toolbar-label {
+            padding: 15px 15px 0;
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .toolbar {
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #eee;
+        }
+
+        .style-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            flex: 1 1 auto;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .style-btn:hover { border-color: var(--primary); background: #f0fdf4; }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            border: none;
+            font-size: 16px;
+            resize: vertical;
+            outline: none;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        .emoji-bar {
+            padding: 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+
+        .emoji-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .emoji {
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            user-select: none;
+        }
+
+        .emoji:hover { background: #e9ecef; }
+
+        @media (max-width: 480px) {
+            .header-bar { flex-direction: column; gap: 10px; }
+            .copy-btn { width: 100%; }
+            .style-btn { font-size: 12px; padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="editor-card">
+        <div class="header-bar">
+            <span style="font-weight: bold; letter-spacing: 1px;">Font Flip Template Generator</span>
+            <button id="copyBtn" class="copy-btn" onclick="copyText()">Copy Text</button>
+        </div>
+
+        <div class="toolbar-label">Fancy Custom Fonts</div>
+        <div class="toolbar">
+            <button class="style-btn" onclick="applyStyle(boldCharMap)"><b>Bold</b></button>
+            <button class="style-btn" onclick="applyStyle(boldItalicMap)"><i><b>Italic</b></i></button>
+            <button class="style-btn" onclick="applyStyle(cursiveCharMap)">𝓒𝓾𝓻𝓼𝓲𝓿𝓮</button>
+            <button class="style-btn" onclick="applyStyle(superscriptMap)">x² Upper</button>
+        </div>
+
+        <textarea id="inputText" placeholder="Write or paste your message here... Select text to apply fonts."></textarea>
+
+        <div class="emoji-bar">
+            <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* DATA MAPS */
+const boldCharMap = {a:"𝐚",b:"𝐛",c:"𝐜",d:"𝐝",e:"𝐞",f:"𝐟",g:"𝐠",h:"𝐡",i:"𝐢",j:"𝐣",k:"𝐤",l:"𝐥",m:"𝐦",n:"𝐧",o:"𝐨",p:"𝐩",q:"𝐪",r:"𝐫",s:"𝐬",t:"𝐭",u:"𝐮",v:"𝐯",w:"𝐰",x:"𝐱",y:"𝐲",z:"𝐳",A:"𝐀",B:"𝐁",C:"𝐂",D:"𝐃",E:"𝐄",F:"𝐅",G:"𝐆",H:"𝐇",I:"𝐈",J:"𝐉",K:"𝐊",L:"𝐋",M:"𝐌",N:"𝐍",O:"𝐎",P:"𝐏",Q:"𝐐",R:"𝐑",S:"𝐒",T:"𝐓",U:"𝐔",V:"𝐕",W:"𝐖",X:"𝐗",Y:"𝐘",Z:"𝐙"};
+const boldItalicMap = {a:"𝒂",b:"𝒃",c:"𝒄",d:"𝒅",e:"𝒆",f:"𝒇",g:"𝒈",h:"𝒉",i:"𝒊",j:"𝒋",k:"𝒌",l:"𝒍",m:"𝒎",n:"𝒏",o:"𝒐",p:"𝒑",q:"𝒒",r:"𝒓",s:"𝒔",t:"𝒕",u:"𝒖",v:"𝒗",w:"𝒘",x:"𝒙",y:"𝒚",z:"𝒛"};
+const cursiveCharMap = {a:"𝓪",b:"𝓫",c:"𝓬",d:"𝓭",e:"𝓮",f:"𝓯",g:"𝓰",h:"𝓱",i:"𝓲",j:"𝓳",k:"𝓴",l:"𝓵",m:"𝓶",n:"𝓷",o:"𝓸",p:"𝓹",q:"𝓺",r:"𝓻",s:"𝓼",t:"𝓽",u:"𝓾",v:"𝓿",w:"𝔀",x:"𝔁",y:"𝔂",z:"𝔃",A:"𝓐",B:"𝓑",C:"𝓒",D:"𝓓",E:"𝓔",F:"𝓕",G:"𝓖",H:"𝓗",I:"𝓘",J:"𝓙",K:"𝓚",L:"𝓛",M:"𝓜",N:"𝓝",O:"𝓞",P:"𝓟",Q:"𝓠",R:"𝓡",S:"𝓢",T:"𝓣",U:"𝓤",V:"𝓥",W:"𝓦",X:"𝓧",Y:"𝓨",Z:"𝓩"};
+const superscriptMap = {0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹",a:"ᵃ",b:"ᵇ",c:"ᶜ",d:"ᵈ",e:"ᵉ",f:"ᶠ",g:"ᵍ",h:"ʰ",i:"ⁱ",j:"ʲ",k:"ᵏ",l:"ˡ",m:"ᵐ",n:"ⁿ",o:"ᵒ",p:"ᵖ",r:"ʳ",s:"ˢ",t:"ᵗ",u:"ᵘ",v:"ᵛ",w:"ʷ",x:"ˣ",y:"ʸ",z:"ᶻ"};
+
+const emojis = ["0️⃣","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","🟠","🟡","🔴","🔔","🫡","👍","🫶","🙏","🎯","💻","🖨️","🖥️","💾","📞","☎️","⏰","📲","🔫","🧨","🔑","📌","📝","❤️","❌","⚠️","🌐","✅","👉","👆","👇"];
+
+const input = document.getElementById("inputText");
+const copyBtn = document.getElementById("copyBtn");
+const emojiGrid = document.getElementById("emojiGrid");
+
+/* CORE LOGIC */
+function applyStyle(map) {
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    if (start === end) return;
+    const text = input.value;
+    const selected = text.slice(start, end).normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+    let converted = "";
+    for (let ch of selected) { converted += map[ch] || ch; }
+    input.setRangeText(converted, start, end, 'select');
+    input.focus();
+}
+
+emojis.forEach(e => {
+    const span = document.createElement("span");
+    span.textContent = e;
+    span.className = "emoji";
+    span.onclick = () => {
+        const start = input.selectionStart;
+        input.setRangeText(e, start, input.selectionEnd, 'end');
+        input.focus();
+    };
+    emojiGrid.appendChild(span);
+});
+
+function copyText() {
+    if (!input.value) return;
+    navigator.clipboard.writeText(input.value).then(() => {
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        copyBtn.style.backgroundColor = "#e1ffc7";
+        copyBtn.style.color = "#128c7e";
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.backgroundColor = "";
+            copyBtn.style.color = "";
+        }, 1500);
+    });
+}
+</script>
+
+</body>
+</html>
